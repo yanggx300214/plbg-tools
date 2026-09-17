@@ -1,14 +1,14 @@
-# PLBG 工具箱（plbg-tools-web）
+# PLBG 工具箱（plbg-tools）
 
 产品线事业部（PLBG）内部小工具的托管站点。在 WorkBuddy 里做的单机 HTML 工具，
 往本仓库 `main` 分支一推送，GitHub Pages 就会**自动重新发布**到公开网页。
 
-> 访问地址：`https://<你的GitHub用户名>.github.io/plbg-tools-web/`
+> 访问地址：`https://yanggx300214.github.io/plbg-tools/`
 
 ## 目录结构
 
 ```
-plbg-tools-web/
+plbg-tools/
 ├── index.html              # 站点首页（工具导航，数据在底部 TOOLS 数组）
 ├── hello-tool/             # 示例工具：演示单文件离线 HTML + 数据对象分离
 │   └── index.html
@@ -52,7 +52,7 @@ git init
 git add .
 git commit -m "init: PLBG 工具箱脚手架"
 git branch -M main
-git remote add origin git@github.com:<用户名>/plbg-tools-web.git
+git remote add origin git@github.com:yanggx300214/plbg-tools.git
 git push -u origin main
 ```
 

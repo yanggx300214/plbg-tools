@@ -3,60 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="refresh" content="0; url=hello-tool/szhgc.html">
 <title>PLBG 工具箱</title>
-<style>
-  :root{
-    --bg:#f5f7fa; --card:#ffffff; --ink:#1f2933; --sub:#647084;
-    --line:#e3e8ef; --brand:#2563eb; --brand-soft:#eaf1ff;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;
-    background:var(--bg);color:var(--ink);line-height:1.6;padding:32px 16px}
-  .wrap{max-width:960px;margin:0 auto}
-  header h1{font-size:24px;letter-spacing:.5px}
-  header p{color:var(--sub);margin-top:6px;font-size:14px}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:28px}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:18px;transition:.15s;text-decoration:none;color:inherit;display:block}
-  .card:hover{border-color:var(--brand);box-shadow:0 6px 20px rgba(37,99,235,.08);transform:translateY(-2px)}
-  .tag{display:inline-block;font-size:12px;color:var(--brand);background:var(--brand-soft);
-    padding:2px 10px;border-radius:999px;margin-bottom:10px}
-  .card h3{font-size:16px;margin-bottom:6px}
-  .card p{font-size:13px;color:var(--sub)}
-  footer{margin-top:36px;text-align:center;color:var(--sub);font-size:12px}
-</style>
+<script>
+  // 进入站点根目录即跳转到登录/工作台页面
+  window.location.replace("hello-tool/szhgc.html");
+</script>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>PLBG 工具箱</h1>
-    <p>产品线事业部内部小工具合集 · 单文件离线 HTML，数据对象与渲染分离 · 自动部署于 GitHub Pages</p>
-  </header>
-  <main class="grid" id="app"></main>
-  <footer>本页由 GitHub Actions 在每次 push 后自动发布 · 仓库：yanggx300214/plbg-tools</footer>
-</div>
-
-<script>
-/* ====== 数据对象（与渲染分离：新增工具只改这里） ====== */
-const TOOLS = [
-  { name:"数字化工作台", tag:"工作台",
-    desc:"产品线数字化工作台原型：数据看板、报表对比、用户与角色管理（单文件离线 HTML）。",
-    path:"hello-tool/" },
-  { name:"FPY 看板", tag:"占位",
-    desc:"（待添加）产品线一次合格率看板。",
-    path:"fpy-dashboard/" },
-];
-
-function render(){
-  const app = document.getElementById("app");
-  app.innerHTML = TOOLS.map(t => `
-    <a class="card" href="${t.path}">
-      <span class="tag">${t.tag}</span>
-      <h3>${t.name}</h3>
-      <p>${t.desc}</p>
-    </a>`).join("");
-}
-render();
-</script>
+  <p>正在跳转到数字化工作台… 若未自动跳转，请<a href="hello-tool/szhgc.html">点击此处</a>。</p>
 </body>
 </html>

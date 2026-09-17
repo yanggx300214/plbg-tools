@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>示例看板 · PLBG 工具箱</title>
+<style>
+  :root{--bg:#f5f7fa;--card:#fff;--ink:#1f2933;--sub:#647084;--line:#e3e8ef;--brand:#2563eb}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding:28px 16px}
+  .wrap{max-width:720px;margin:0 auto}
+  a.back{color:var(--brand);font-size:13px;text-decoration:none}
+  h1{font-size:20px;margin:12px 0 4px}
+  p.sub{color:var(--sub);font-size:13px;margin-bottom:20px}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center}
+  .kpi .v{font-size:26px;font-weight:700}
+  .kpi .l{font-size:12px;color:var(--sub);margin-top:4px}
+  svg{width:100%;height:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">← 返回工具箱</a>
+  <h1 id="title"></h1>
+  <p class="sub" id="subtitle"></p>
+
+  <div class="kpis" id="kpis"></div>
+  <svg id="chart" viewBox="0 0 600 260"></svg>
+</div>
+
+<script>
+/* ====== 数据对象（替换这块即可换成你的真实数据，无需改渲染逻辑） ====== */
+const DATA = {
+  title: "示例月度概览",
+  subtitle: "演示：KPI 卡片 + 纯 SVG 柱状图，单文件离线可用",
+  kpis: [
+    { label:"总量", value:1280 },
+    { label:"达标率", value:"92.3%" },
+    { label:"待处理", value:37 },
+  ],
+  bars: [
+    { m:"1月", v:80 }, { m:"2月", v:95 }, { m:"3月", v:110 },
+    { m:"4月", v:102 }, { m:"5月", v:130 }, { m:"6月", v:121 },
+  ]
+};
+
+/* ====== 渲染逻辑（一般不用动） ====== */
+function render(){
+  document.getElementById("title").textContent = DATA.title;
+  document.getElementById("subtitle").textContent = DATA.subtitle;
+
+  document.getElementById("kpis").innerHTML = DATA.kpis.map(k=>`
+    <div class="kpi"><div class="v">${k.value}</div><div class="l">${k.label}</div></div>`).join("");
+
+  const svg = document.getElementById("chart");
+  const W=600,H=260,pad=40, max=Math.max(...DATA.bars.map(b=>b.v));
+  const bw=(W-pad*2)/DATA.bars.length*0.6;
+  const step=(W-pad*2)/DATA.bars.length;
+  let s=`<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#e3e8ef"/>`;
+  DATA.bars.forEach((b,i)=>{
+    const x=pad+step*i+(step-bw)/2;
+    const h=(b.v/max)*(H-pad*2);
+    const y=H-pad-h;
+    s+=`<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" fill="#2563eb"/>`;
+    s+=`<text x="${x+bw/2}" y="${y-6}" text-anchor="middle" font-size="12" fill="#647084">${b.v}</text>`;
+    s+=`<text x="${x+bw/2}" y="${H-pad+18}" text-anchor="middle" font-size="12" fill="#647084">${b.m}</text>`;
+  });
+  svg.innerHTML=s;
+}
+render();
+</script>
+</body>
+</html>

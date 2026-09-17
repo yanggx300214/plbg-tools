@@ -193,7 +193,7 @@
     <select id="login-type">
       <option>用户名/密码</option>
     </select>
-    <input type="date" id="login-date" value="2026-09-16">
+    <input type="date" id="login-date">
     <input type="text" id="login-id" placeholder="账号">
     <input type="password" id="login-pwd" placeholder="密码">
     <div class="login-error" id="login-error"></div>
@@ -1063,6 +1063,15 @@
   renderRoles();
   renderUserRoleSelects();
   checkAutoLogin();
+
+  /* 登录界面日期默认取当天（本地时区 YYYY-MM-DD） */
+  (function setLoginDate(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const today = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    const de = document.getElementById('login-date');
+    if (de) de.value = today;
+  })();
 </script>
 </body>
 </html>

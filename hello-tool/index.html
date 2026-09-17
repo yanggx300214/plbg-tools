@@ -3,72 +3,1066 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>示例看板 · PLBG 工具箱</title>
+<title>数字化工作台 · 布局模板</title>
 <style>
-  :root{--bg:#f5f7fa;--card:#fff;--ink:#1f2933;--sub:#647084;--line:#e3e8ef;--brand:#2563eb}
+  /* ===== 主题变量：改色只动这里 ===== */
+  :root{
+    --header-bg:#1d4ed8;          /* 顶部蓝条 */
+    --header-bg2:#1e40af;         /* 顶部渐变深蓝 */
+    --sidebar-bg:#0f172a;         /* 左侧深色栏 */
+    --sidebar-text:#cbd5e1;       /* 左侧文字 */
+    --sidebar-active-bg:#1d4ed8;  /* 选中菜单背景 */
+    --sidebar-active-bar:#60a5fa; /* 选中菜单左边条 */
+    --content-bg:#f1f5f9;         /* 右侧底色 */
+    --card-bg:#ffffff;            /* 卡片白底 */
+    --text-1:#0f172a;            /* 主文字 */
+    --text-2:#64748b;            /* 次文字 */
+    --border:#e2e8f0;            /* 描边 */
+    --accent:#1d4ed8;            /* 强调蓝 */
+    --good:#16a34a;             /* 正向 */
+    --bad:#dc2626;              /* 负向 */
+  }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding:28px 16px}
-  .wrap{max-width:720px;margin:0 auto}
-  a.back{color:var(--brand);font-size:13px;text-decoration:none}
-  h1{font-size:20px;margin:12px 0 4px}
-  p.sub{color:var(--sub);font-size:13px;margin-bottom:20px}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center}
-  .kpi .v{font-size:26px;font-weight:700}
-  .kpi .l{font-size:12px;color:var(--sub);margin-top:4px}
-  svg{width:100%;height:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+  body{font-family:"Microsoft YaHei","PingFang SC",system-ui,-apple-system,sans-serif;
+    background:var(--content-bg);color:var(--text-1);height:100vh;overflow:hidden}
+
+  /* ===== 登录界面 ===== */
+  #login-screen{position:fixed;inset:0;background:#fff;z-index:100;display:flex;
+    align-items:center;justify-content:center}
+  .login-card{width:360px;padding:36px 40px}
+  .login-card h1{font-size:32px;font-weight:400;color:var(--accent);margin-bottom:16px}
+  .login-sub{font-size:13px;color:var(--text-2);margin-bottom:12px}
+  .login-card select,.login-card input[type="date"],.login-card input[type="text"],.login-card input[type="password"]{
+    width:100%;height:38px;margin-bottom:12px;border:1px solid var(--border);border-radius:2px;
+    padding:0 10px;font-size:13px;outline:none;background:#f8fafc;color:var(--text-1)}
+  .login-card select{background:#f0f2f5}
+  .login-card input:focus{border-color:var(--accent);background:#fff}
+  .login-options{display:flex;gap:16px;font-size:13px;color:var(--text-1);margin:4px 0 18px}
+  .login-options label{display:flex;align-items:center;gap:6px;cursor:pointer}
+  .login-options input{width:14px;height:14px}
+  #login-btn{width:100%;height:38px;border:none;background:var(--accent);color:#fff;
+    font-size:15px;cursor:pointer;margin-bottom:12px}
+  #login-btn:hover{background:#1e40af}
+  .login-extra{text-align:right;font-size:13px}
+  .login-extra a{color:var(--accent);text-decoration:none}
+  .login-extra a:hover{text-decoration:underline}
+  .login-error{color:var(--bad);font-size:12px;margin-top:-6px;margin-bottom:10px}
+
+  /* ===== 顶部 Header ===== */
+  .header{height:56px;background:linear-gradient(90deg,var(--header-bg),var(--header-bg2));
+    display:flex;align-items:center;color:#fff;padding:0 18px;gap:24px}
+  .brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:700;white-space:nowrap}
+  .brand .logo{width:30px;height:30px;border-radius:7px;background:#fff;color:var(--header-bg);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
+  .nav{display:flex;gap:4px;flex:1}
+  .nav a{color:rgba(255,255,255,.85);text-decoration:none;padding:8px 14px;border-radius:6px;
+    font-size:14px;cursor:pointer;transition:.15s}
+  .nav a:hover{background:rgba(255,255,255,.12);color:#fff}
+  .nav a.active{background:rgba(255,255,255,.18);color:#fff;font-weight:600}
+  .header-right{display:flex;align-items:center;gap:14px}
+  .search{background:rgba(255,255,255,.18);border:none;border-radius:18px;padding:6px 14px;
+    color:#fff;font-size:13px;width:180px;outline:none}
+  .search::placeholder{color:rgba(255,255,255,.7)}
+  .icon-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);
+    display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .avatar{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--header-bg);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+
+  /* ===== 布局：左菜单 + 右内容 ===== */
+  .layout{display:flex;height:calc(100vh - 56px)}
+  .sidebar{width:210px;background:var(--sidebar-bg);color:var(--sidebar-text);
+    display:flex;flex-direction:column;flex-shrink:0}
+  .side-title{padding:16px 18px 10px;font-size:12px;letter-spacing:1px;color:#64748b;
+    text-transform:uppercase}
+  .menu{padding:4px 10px;flex:1;overflow-y:auto}
+  .menu-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:8px;
+    cursor:pointer;font-size:14px;margin-bottom:4px;color:var(--sidebar-text);transition:.15s;
+    position:relative}
+  .menu-item:hover{background:rgba(255,255,255,.06);color:#fff}
+  .menu-item.active{background:var(--sidebar-active-bg);color:#fff;font-weight:600}
+  .menu-item.active::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;
+    border-radius:2px;background:var(--sidebar-active-bar)}
+  .menu-item svg{width:18px;height:18px;flex-shrink:0}
+  .menu-item .chev{margin-left:auto;width:14px;height:14px;transition:transform .2s}
+  .menu-item.open .chev{transform:rotate(90deg)}
+  .submenu{max-height:0;overflow:hidden;transition:max-height .25s ease}
+  .submenu.open{max-height:240px}
+  .submenu-item{display:flex;align-items:center;padding:9px 14px 9px 40px;border-radius:8px;
+    cursor:pointer;font-size:13px;color:var(--sidebar-text);margin-bottom:2px;transition:.15s}
+  .submenu-item:hover{background:rgba(255,255,255,.06);color:#fff}
+  .submenu-item.active{background:var(--sidebar-active-bg);color:#fff;font-weight:600}
+  .side-footer{padding:12px 18px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;
+    color:#64748b;cursor:pointer}
+
+  /* ===== 主内容区 ===== */
+  .main{flex:1;overflow-y:auto;padding:20px 24px}
+  .view-section{display:none}
+  .view-section.active{display:block}
+  .crumb{font-size:13px;color:var(--text-2);margin-bottom:6px}
+  .crumb b{color:var(--text-1)}
+  .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .page-head h1{font-size:20px;font-weight:700}
+  .page-head .date{font-size:13px;color:var(--text-2)}
+
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:18px}
+  .stat{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+  .stat .label{font-size:13px;color:var(--text-2);margin-bottom:10px}
+  .stat .value{font-size:26px;font-weight:800;line-height:1}
+  .stat .sub{font-size:12px;margin-top:8px}
+  .up{color:var(--good)}.down{color:var(--bad)}
+
+  .panel{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px}
+  .panel h2{font-size:15px;font-weight:700;margin-bottom:14px}
+  .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:18px}
+  .bar{display:flex;align-items:flex-end;gap:14px;height:200px;padding-top:10px}
+  .bar .col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .bar .col .fill{width:100%;border-radius:6px 6px 0 0;background:var(--accent)}
+  .bar .col .cap{font-size:12px;color:var(--text-2);margin-top:8px}
+  .bar .col .num{font-size:12px;font-weight:700;margin-bottom:4px}
+  .list .row{display:flex;align-items:center;justify-content:space-between;padding:11px 4px;
+    border-bottom:1px solid var(--border);font-size:14px}
+  .list .row:last-child{border-bottom:none}
+  .tag{font-size:12px;padding:2px 9px;border-radius:20px;font-weight:600}
+  .tag.ok{background:#dcfce7;color:var(--good)}
+  .tag.run{background:#dbeafe;color:#2563eb}
+  .tag.no{background:#fef3c7;color:#d97706}
+
+  /* ===== 用户管理 / 角色管理 通用页面样式 ===== */
+  .crud-wrap{max-width:1100px}
+  .crud-title{font-size:18px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .crud-title::before{content:"";display:inline-block;width:4px;height:18px;border-radius:2px;background:var(--accent)}
+  .crud-sub{font-size:13px;color:var(--text-2);margin-bottom:18px}
+  .crud-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .crud-form{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+  .crud-form input,.crud-form select{height:34px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;color:var(--text-1);outline:none}
+  .crud-form input::placeholder{color:#94a3b8}
+  .crud-form input:focus,.crud-form select:focus{border-color:var(--accent)}
+  .crud-form .btn{height:34px;padding:0 18px;border:none;border-radius:6px;background:var(--accent);color:#fff;font-size:13px;cursor:pointer}
+  .crud-form .btn:hover{background:#1e40af}
+  .crud-form .btn.gray{background:#64748b}
+  .crud-form .btn.gray:hover{background:#475569}
+  .crud-table{width:100%;border-collapse:collapse;font-size:13px}
+  .crud-table th{text-align:left;padding:12px 14px;background:#f8fafc;color:var(--text-2);font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap}
+  .crud-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+  .crud-table tr:last-child td{border-bottom:none}
+  .crud-table tr:hover td{background:#f8fafc}
+  .crud-table .ops{display:flex;gap:8px;justify-content:flex-end}
+  .crud-table .ops button{height:26px;padding:0 10px;border:1px solid var(--border);border-radius:4px;background:#fff;font-size:12px;color:var(--text-1);cursor:pointer}
+  .crud-table .ops button:hover{border-color:var(--accent);color:var(--accent)}
+  .crud-table .ops button:disabled{border-color:var(--border);color:#94a3b8;cursor:not-allowed}
+  .crud-table select{height:28px;border:1px solid var(--border);border-radius:4px;padding:0 8px;font-size:12px;outline:none;background:#fff}
+  .table-scroll{max-height:500px;overflow-y:auto;border-top:1px solid var(--border)}
+  .empty-tip{text-align:center;color:var(--text-2);font-size:13px;padding:24px 0}
+
+  /* 角色管理复选框网格 */
+  .perm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 18px;margin:18px 0}
+  .perm-item{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+  .perm-item input{width:16px;height:16px;accent-color:var(--accent)}
+  .role-name-input{width:220px;height:34px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;color:var(--text-1);outline:none;margin-bottom:6px}
+  .role-name-input::placeholder{color:#94a3b8}
+  .role-name-input:focus{border-color:var(--accent)}
+  .btn-primary{height:34px;padding:0 18px;border:none;border-radius:6px;background:var(--accent);color:#fff;font-size:13px;cursor:pointer}
+  .btn-primary:hover{background:#1e40af}
+
+  /* ===== 弹窗 Modal ===== */
+  .modal-mask{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:200}
+  .modal-mask.open{display:flex}
+  .modal{width:440px;max-width:92vw;background:#fff;border-radius:12px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,.18)}
+  .modal h3{font-size:17px;font-weight:700;margin-bottom:18px}
+  .modal .field{margin-bottom:14px}
+  .modal .field label{display:block;font-size:13px;color:var(--text-2);margin-bottom:6px}
+  .modal .field input,.modal .field select{width:100%;height:36px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;outline:none;color:var(--text-1)}
+  .modal .field input:focus,.modal .field select:focus{border-color:var(--accent)}
+  .modal .field .readonly{background:#f1f5f9;color:var(--text-2)}
+  .modal .field .hint{font-size:11px;color:var(--text-2);margin-top:4px}
+  .modal .perm-grid{margin:6px 0 0}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+  .modal-actions button{height:34px;padding:0 18px;border-radius:6px;font-size:13px;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-1)}
+  .modal-actions .primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .modal-actions .primary:hover{background:#1e40af}
+  .modal-actions button:hover{border-color:var(--accent);color:var(--accent)}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <a class="back" href="../">← 返回工具箱</a>
-  <h1 id="title"></h1>
-  <p class="sub" id="subtitle"></p>
 
-  <div class="kpis" id="kpis"></div>
-  <svg id="chart" viewBox="0 0 600 260"></svg>
+<!-- 登录界面 -->
+<div id="login-screen">
+  <div class="login-card">
+    <h1>用户登录</h1>
+    <div class="login-sub">请选择认证方式</div>
+    <select id="login-type">
+      <option>用户名/密码</option>
+    </select>
+    <input type="date" id="login-date" value="2026-09-16">
+    <input type="text" id="login-id" placeholder="账号">
+    <input type="password" id="login-pwd" placeholder="密码">
+    <div class="login-error" id="login-error"></div>
+    <div class="login-options">
+      <label><input type="checkbox" id="rem-user"> 记住用户名</label>
+      <label><input type="checkbox" id="rem-login"> 记住登录信息</label>
+    </div>
+    <button id="login-btn">登录</button>
+    <div class="login-extra"><a href="#" id="forgot-pwd">忘记密码？</a></div>
+  </div>
 </div>
 
+<!-- 应用主体 -->
+<div id="app" style="display:none">
+
+<!-- 顶部 Header -->
+<header class="header">
+  <div class="brand">
+    <div class="logo">数</div>
+    <span>数字化工作台</span>
+  </div>
+  <nav class="nav">
+    <a class="active">首页</a>
+    <a>所有功能</a>
+    <a>收藏</a>
+    <a>联系我们</a>
+    <a>智能助手</a>
+  </nav>
+  <div class="header-right">
+    <input class="search" placeholder="搜索看板 / 报表 / 工具…">
+    <div class="icon-btn" title="消息">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </div>
+    <div class="avatar">杨</div>
+  </div>
+</header>
+
+<!-- 左菜单 + 右内容 -->
+<div class="layout">
+  <aside class="sidebar">
+    <div class="side-title">主菜单</div>
+    <div class="menu">
+      <div class="menu-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>数据看板</span>
+      </div>
+      <div class="menu-item" data-expand="report">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        <span>报表中心</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="submenu" id="sub-report">
+        <div class="submenu-item" data-view="report-compare">月末非标物料对比检查</div>
+      </div>
+      <div class="menu-item" data-view="data-governance">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+        <span>数据治理</span>
+      </div>
+      <div class="menu-item" data-view="label-print">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <span>标签打印</span>
+      </div>
+      <div class="menu-item" data-view="automation">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <span>流程自动化</span>
+      </div>
+      <div class="menu-item" data-view="toolbox">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2-2 2.5-2.5z"/></svg>
+        <span>工具箱</span>
+      </div>
+      <div class="menu-item" data-expand="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.81 1.17V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 8 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15H4a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 6 8.6a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 11 4.6V4a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 2.81 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>系统设置</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div class="submenu" id="sub-settings">
+        <div class="submenu-item" data-view="users">用户管理</div>
+        <div class="submenu-item" data-view="roles">角色管理</div>
+      </div>
+    </div>
+    <div class="side-footer">收起菜单 «</div>
+  </aside>
+
+  <!-- 主内容 -->
+  <main class="main">
+    <!-- 数据看板 -->
+    <section class="view-section active" id="view-dashboard">
+      <div class="crumb">首页 / <b>数据看板</b></div>
+      <div class="page-head">
+        <h1>数据看板</h1>
+        <div class="date">数据更新：2026-09-16 14:44</div>
+      </div>
+
+      <div class="cards">
+        <div class="stat">
+          <div class="label">在运看板</div>
+          <div class="value">12</div>
+          <div class="sub up">▲ 2 本月新增</div>
+        </div>
+        <div class="stat">
+          <div class="label">本月报表产出</div>
+          <div class="value">38</div>
+          <div class="sub up">▲ 6 较上月</div>
+        </div>
+        <div class="stat">
+          <div class="label">接入数据源</div>
+          <div class="value">7</div>
+          <div class="sub">ERP / MES / WMS 等</div>
+        </div>
+        <div class="stat">
+          <div class="label">自动化任务</div>
+          <div class="value">5</div>
+          <div class="sub down">▼ 1 较上周</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <h2>各数据源本月接入记录数</h2>
+          <div class="bar">
+            <div class="col"><div class="num">1.2万</div><div class="fill" style="height:100%"></div><div class="cap">ERP</div></div>
+            <div class="col"><div class="num">8600</div><div class="fill" style="height:72%"></div><div class="cap">MES</div></div>
+            <div class="col"><div class="num">5400</div><div class="fill" style="height:45%"></div><div class="cap">WMS</div></div>
+            <div class="col"><div class="num">3100</div><div class="fill" style="height:26%"></div><div class="cap">CRM</div></div>
+            <div class="col"><div class="num">1800</div><div class="fill" style="height:15%"></div><div class="cap">手工</div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>最近任务 / 工具</h2>
+          <div class="list">
+            <div class="row"><span>销售日报看板</span><span class="tag ok">已发布</span></div>
+            <div class="row"><span>产线标签模板 V2</span><span class="tag run">设计中</span></div>
+            <div class="row"><span>数据清洗治理任务</span><span class="tag run">运行中</span></div>
+            <div class="row"><span>退货分析报表</span><span class="tag ok">已发布</span></div>
+            <div class="row"><span>库存周转看板</span><span class="tag no">待评审</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 月末非标物料对比检查 -->
+    <section class="view-section" id="view-report-compare">
+      <div class="crumb">报表中心 / <b>月末非标物料对比检查</b></div>
+      <div class="page-head">
+        <h1>月末非标物料对比检查</h1>
+        <div class="date">导入完工与库存明细，比对非标物料</div>
+      </div>
+
+      <!-- 导入区 -->
+      <div class="grid2" style="grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
+        <div class="panel">
+          <h2>完工明细表（左）</h2>
+          <div class="crud-form" style="margin-bottom:10px">
+            <button class="btn" id="btn-import-finish">导入本地文件</button>
+            <span id="finish-file" style="font-size:13px;color:var(--text-2)">未选择文件</span>
+          </div>
+          <div class="table-scroll" style="max-height:240px">
+            <table class="crud-table" id="finish-preview"><thead></thead><tbody></tbody></table>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>库存明细表（右）</h2>
+          <div class="crud-form" style="margin-bottom:10px">
+            <button class="btn" id="btn-import-stock">导入本地文件</button>
+            <span id="stock-file" style="font-size:13px;color:var(--text-2)">未选择文件</span>
+          </div>
+          <div class="table-scroll" style="max-height:240px">
+            <table class="crud-table" id="stock-preview"><thead></thead><tbody></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 综合分析 -->
+      <div class="panel">
+        <h2>综合分析</h2>
+        <div class="crud-form" style="margin-bottom:14px">
+          <button class="btn" id="btn-analyze">综合分析</button>
+        </div>
+        <div class="crud-form" style="margin-bottom:6px;align-items:flex-end">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:12px;color:var(--text-2)">完工表 WBS 列</label>
+            <select id="finish-wbs-col" style="height:34px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;min-width:130px"></select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:12px;color:var(--text-2)">库存表 WBS 列</label>
+            <select id="stock-wbs-col" style="height:34px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;min-width:130px"></select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:12px;color:var(--text-2)">库存数量列</label>
+            <select id="stock-qty-col" style="height:34px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;min-width:130px"></select>
+          </div>
+        </div>
+        <div id="analyze-tip" style="font-size:13px;color:var(--text-2)">请先导入两张表，确认列映射后点击综合分析。</div>
+      </div>
+
+      <!-- 分析结果 -->
+      <div class="panel">
+        <h2>分析结果 <span id="result-count" style="font-size:13px;color:var(--text-2);font-weight:400"></span></h2>
+        <div class="crud-form" style="margin-bottom:10px">
+          <button class="btn" id="btn-export">导出 CSV</button>
+          <button class="btn" id="btn-export-xlsx" style="margin-left:10px">导出 XLSX</button>
+        </div>
+        <div class="table-scroll" style="max-height:420px">
+          <table class="crud-table" id="result-table"><thead></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      <input type="file" id="file-finish" accept=".csv,.xlsx,.xls,.txt" hidden>
+      <input type="file" id="file-stock" accept=".csv,.xlsx,.xls,.txt" hidden>
+    </section>
+
+    <!-- 用户管理 -->
+    <section class="view-section" id="view-users">
+      <div class="crumb">系统设置 / <b>用户管理</b></div>
+      <div class="page-head">
+        <h1>用户管理</h1>
+      </div>
+      <div class="crud-wrap">
+        <div class="crud-title">用户管理</div>
+        <div class="crud-sub">创建或删除用户，并分配角色（角色决定可访问的功能页）。超级管理员默认拥有全部权限。所有改动会保存到本地，刷新不丢失。</div>
+        <div class="crud-card">
+          <div class="crud-form">
+            <input type="text" id="u-id" placeholder="账号" style="width:120px">
+            <input type="text" id="u-name" placeholder="姓名" style="width:120px">
+            <input type="password" id="u-pwd" placeholder="密码（必填，含字母/数字/符号≥8位）" style="width:230px">
+            <select id="u-role" style="width:140px"></select>
+            <button class="btn" id="btn-create-user">创建用户</button>
+            <button class="btn gray" id="btn-reset-data" style="margin-left:auto">重置示例数据</button>
+          </div>
+          <div class="table-scroll">
+            <table class="crud-table">
+              <thead>
+                <tr><th>账号</th><th>姓名</th><th>角色</th><th style="text-align:right">操作</th></tr>
+              </thead>
+              <tbody id="user-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 角色管理 -->
+    <section class="view-section" id="view-roles">
+      <div class="crumb">系统设置 / <b>角色管理</b></div>
+      <div class="page-head">
+        <h1>角色管理</h1>
+      </div>
+      <div class="crud-wrap">
+        <div class="crud-title">角色管理</div>
+        <div class="crud-sub">创建角色并勾选可访问的功能页；删除角色请慎重（超级管理员不可删除）。</div>
+        <div class="crud-card">
+          <input type="text" class="role-name-input" id="r-name" placeholder="角色名">
+          <div class="perm-grid" id="perm-grid-create">
+            <label class="perm-item"><input type="checkbox" value="数据看板"> 数据看板</label>
+            <label class="perm-item"><input type="checkbox" value="报表中心"> 报表中心</label>
+            <label class="perm-item"><input type="checkbox" value="月末非标物料对比检查"> 月末非标物料对比检查</label>
+            <label class="perm-item"><input type="checkbox" value="数据治理"> 数据治理</label>
+            <label class="perm-item"><input type="checkbox" value="标签打印"> 标签打印</label>
+            <label class="perm-item"><input type="checkbox" value="流程自动化"> 流程自动化</label>
+            <label class="perm-item"><input type="checkbox" value="工具箱"> 工具箱</label>
+            <label class="perm-item"><input type="checkbox" value="用户管理"> 用户管理</label>
+            <label class="perm-item"><input type="checkbox" value="角色管理"> 角色管理</label>
+          </div>
+          <button class="btn-primary" id="btn-create-role" style="margin-bottom:18px">创建角色</button>
+          <div class="table-scroll">
+            <table class="crud-table">
+              <thead>
+                <tr><th>角色名</th><th>权限</th><th style="text-align:right">操作</th></tr>
+              </thead>
+              <tbody id="role-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- 用户编辑弹窗 -->
+<div class="modal-mask" id="user-modal">
+  <div class="modal">
+    <h3>编辑用户</h3>
+    <div class="field">
+      <label>账号</label>
+      <input type="text" id="u-id-e" class="readonly" readonly>
+    </div>
+    <div class="field">
+      <label>姓名</label>
+      <input type="text" id="u-name-e">
+    </div>
+    <div class="field">
+      <label>角色</label>
+      <select id="u-role-e"></select>
+    </div>
+    <div class="field">
+      <label>重置密码（留空则不修改）</label>
+      <input type="password" id="u-pwd-e" placeholder="留空则不修改">
+      <div class="hint">密码需含英文字母、数字、特殊符号，且不低于8位</div>
+    </div>
+    <div class="modal-actions">
+      <button onclick="closeModal('user-modal')">取消</button>
+      <button class="primary" id="btn-save-user">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 角色编辑弹窗 -->
+<div class="modal-mask" id="role-modal">
+  <div class="modal">
+    <h3>编辑角色</h3>
+    <div class="field">
+      <label>角色名</label>
+      <input type="text" id="r-name-e">
+    </div>
+    <div class="field">
+      <label>功能权限</label>
+      <div class="perm-grid" id="perm-grid-edit"></div>
+    </div>
+    <div class="modal-actions">
+      <button onclick="closeModal('role-modal')">取消</button>
+      <button class="primary" id="btn-save-role">保存</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /#app -->
+
+<script src="xlsx.full.min.js"></script>
+
 <script>
-/* ====== 数据对象（替换这块即可换成你的真实数据，无需改渲染逻辑） ====== */
-const DATA = {
-  title: "示例月度概览",
-  subtitle: "演示：KPI 卡片 + 纯 SVG 柱状图，单文件离线可用",
-  kpis: [
-    { label:"总量", value:1280 },
-    { label:"达标率", value:"92.3%" },
-    { label:"待处理", value:37 },
-  ],
-  bars: [
-    { m:"1月", v:80 }, { m:"2月", v:95 }, { m:"3月", v:110 },
-    { m:"4月", v:102 }, { m:"5月", v:130 }, { m:"6月", v:121 },
-  ]
-};
+  /* ===== 默认虚拟数据 ===== */
+  const defaultUsers = [
+    {id:'300214', name:'杨国兴', role:'超级管理员', pwd:'Pass@1234'},
+    {id:'300104', name:'赵海燕', role:'工业工程部', pwd:'Pass@1234'},
+    {id:'304801', name:'王勋勋', role:'生产管理部', pwd:'Pass@1234'},
+    {id:'310734', name:'杨嘉', role:'工业工程部', pwd:'Pass@1234'},
+    {id:'313130', name:'苗欢欢', role:'生产管理部', pwd:'Pass@1234'},
+    {id:'316556', name:'张浩然', role:'物料部', pwd:'Pass@1234'},
+    {id:'318526', name:'代延召', role:'数据治理组', pwd:'Pass@1234'},
+    {id:'319653', name:'李建华', role:'质量部', pwd:'Pass@1234'},
+    {id:'322095', name:'王鹏', role:'工业工程部', pwd:'Pass@1234'},
+    {id:'323658', name:'齐亚楠', role:'生产管理部', pwd:'Pass@1234'},
+    {id:'326552', name:'毕超鑫', role:'物料部', pwd:'Pass@1234'},
+    {id:'337331', name:'乔雪娇', role:'数据治理组', pwd:'Pass@1234'},
+    {id:'345590', name:'张一凡', role:'质量部', pwd:'Pass@1234'}
+  ];
+  const defaultRoles = [
+    {name:'超级管理员', perms:'全部权限'},
+    {name:'工业工程部', perms:'数据看板、报表中心、月末非标物料对比检查、流程自动化'},
+    {name:'生产管理部', perms:'数据看板、标签打印、流程自动化'},
+    {name:'数据治理组', perms:'数据治理、工具箱、用户管理'},
+    {name:'物料部', perms:'标签打印、月末非标物料对比检查'},
+    {name:'质量部', perms:'报表中心、流程自动化'}
+  ];
+  const PERMS=['数据看板','报表中心','月末非标物料对比检查','数据治理','标签打印','流程自动化','工具箱','用户管理','角色管理'];
 
-/* ====== 渲染逻辑（一般不用动） ====== */
-function render(){
-  document.getElementById("title").textContent = DATA.title;
-  document.getElementById("subtitle").textContent = DATA.subtitle;
+  /* ===== 本地持久化（刷新不丢） ===== */
+  const LS_USERS='dt_users_v1', LS_ROLES='dt_roles_v1';
+  function loadUsers(){ try{const s=localStorage.getItem(LS_USERS); if(s) return JSON.parse(s);}catch(e){} return JSON.parse(JSON.stringify(defaultUsers)); }
+  function loadRoles(){ try{const s=localStorage.getItem(LS_ROLES); if(s) return JSON.parse(s);}catch(e){} return JSON.parse(JSON.stringify(defaultRoles)); }
+  let users=loadUsers();
+  let roles=loadRoles();
+  function saveUsers(){ try{localStorage.setItem(LS_USERS,JSON.stringify(users));}catch(e){} }
+  function saveRoles(){ try{localStorage.setItem(LS_ROLES,JSON.stringify(roles));}catch(e){} }
 
-  document.getElementById("kpis").innerHTML = DATA.kpis.map(k=>`
-    <div class="kpi"><div class="v">${k.value}</div><div class="l">${k.label}</div></div>`).join("");
+  const el=id=>document.getElementById(id);
+  function validPwd(p){ return /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/.test(p); }
+  function roleNames(){ return roles.map(r=>r.name); }
 
-  const svg = document.getElementById("chart");
-  const W=600,H=260,pad=40, max=Math.max(...DATA.bars.map(b=>b.v));
-  const bw=(W-pad*2)/DATA.bars.length*0.6;
-  const step=(W-pad*2)/DATA.bars.length;
-  let s=`<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#e3e8ef"/>`;
-  DATA.bars.forEach((b,i)=>{
-    const x=pad+step*i+(step-bw)/2;
-    const h=(b.v/max)*(H-pad*2);
-    const y=H-pad-h;
-    s+=`<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="4" fill="#2563eb"/>`;
-    s+=`<text x="${x+bw/2}" y="${y-6}" text-anchor="middle" font-size="12" fill="#647084">${b.v}</text>`;
-    s+=`<text x="${x+bw/2}" y="${H-pad+18}" text-anchor="middle" font-size="12" fill="#647084">${b.m}</text>`;
+  /* ===== 渲染用户表 ===== */
+  function renderUsers(){
+    const tbody=el('user-table-body');
+    if(!tbody) return;
+    if(users.length===0){ tbody.innerHTML='<tr><td colspan="4" class="empty-tip">暂无用户，请在上方创建</td></tr>'; return; }
+    tbody.innerHTML = users.map(u=>`
+      <tr>
+        <td>${u.id}</td>
+        <td>${u.name}</td>
+        <td>
+          <select data-act="role" data-id="${u.id}">
+            ${roleNames().map(r=>`<option value="${r}" ${r===u.role?'selected':''}>${r}</option>`).join('')}
+          </select>
+        </td>
+        <td class="ops">
+          <button data-act="edit" data-id="${u.id}">编辑</button>
+          <button data-act="del" data-id="${u.id}">删除</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  /* ===== 渲染角色表 ===== */
+  function renderRoles(){
+    const tbody=el('role-table-body');
+    if(!tbody) return;
+    if(roles.length===0){ tbody.innerHTML='<tr><td colspan="3" class="empty-tip">暂无角色，请在上方创建</td></tr>'; return; }
+    tbody.innerHTML = roles.map(r=>`
+      <tr>
+        <td>${r.name}</td>
+        <td>${r.perms}</td>
+        <td class="ops">
+          <button data-act="edit-r" data-name="${r.name}">编辑</button>
+          <button data-act="del-r" data-name="${r.name}" ${r.name==='超级管理员'?'disabled':''}>删除</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  /* ===== 填充角色下拉 ===== */
+  function fillRoleSelect(sel){
+    if(!sel) return;
+    const cur=sel.value;
+    sel.innerHTML=roleNames().map(r=>`<option value="${r}" ${r===cur?'selected':''}>${r}</option>`).join('');
+  }
+  function renderUserRoleSelects(){
+    fillRoleSelect(el('u-role'));
+    fillRoleSelect(el('u-role-e'));
+  }
+
+  /* ===== 创建用户 ===== */
+  function createUser(){
+    const id=el('u-id').value.trim();
+    const name=el('u-name').value.trim();
+    const pwd=el('u-pwd').value;
+    const role=el('u-role').value;
+    if(!id){ alert('请输入账号'); return; }
+    if(users.some(u=>u.id===id)){ alert('账号已存在'); return; }
+    if(!name){ alert('请输入姓名'); return; }
+    if(!pwd){ alert('请输入密码'); return; }
+    if(!validPwd(pwd)){ alert('密码必须包含英文字母、数字、特殊符号，且不低于8位'); return; }
+    users.push({id,name,role,pwd});
+    saveUsers(); renderUsers(); renderUserRoleSelects();
+    el('u-id').value=''; el('u-name').value=''; el('u-pwd').value='';
+    alert('用户 '+id+' 创建成功');
+  }
+
+  /* ===== 编辑用户 ===== */
+  let editUserId=null;
+  function openUserEdit(id){
+    const u=users.find(x=>x.id===id);
+    if(!u) return;
+    editUserId=id;
+    el('u-id-e').value=u.id;
+    el('u-name-e').value=u.name;
+    el('u-pwd-e').value='';
+    fillRoleSelect(el('u-role-e'));
+    el('u-role-e').value=u.role;
+    openModal('user-modal');
+  }
+  function saveUserEdit(){
+    const u=users.find(x=>x.id===editUserId);
+    if(!u) return;
+    const name=el('u-name-e').value.trim();
+    const pwd=el('u-pwd-e').value;
+    const role=el('u-role-e').value;
+    if(!name){ alert('请输入姓名'); return; }
+    if(pwd && !validPwd(pwd)){ alert('密码必须包含英文字母、数字、特殊符号，且不低于8位'); return; }
+    u.name=name; u.role=role; if(pwd) u.pwd=pwd;
+    saveUsers(); renderUsers(); renderUserRoleSelects();
+    closeModal('user-modal');
+    alert('保存成功');
+  }
+
+  /* ===== 删除用户 ===== */
+  function deleteUser(id){
+    if(confirm('确认删除用户 '+id+' ？')){
+      users=users.filter(u=>u.id!==id);
+      saveUsers(); renderUsers(); renderUserRoleSelects();
+    }
+  }
+
+  /* ===== 创建角色 ===== */
+  function createRole(){
+    const name=el('r-name').value.trim();
+    const perms=[...el('perm-grid-create').querySelectorAll('input:checked')].map(i=>i.value);
+    if(!name){ alert('请输入角色名'); return; }
+    if(roles.some(r=>r.name===name)){ alert('角色名已存在'); return; }
+    roles.push({name, perms: perms.length?perms.join('、'):'无'});
+    saveRoles(); renderRoles(); renderUserRoleSelects();
+    el('r-name').value='';
+    el('perm-grid-create').querySelectorAll('input').forEach(i=>i.checked=false);
+    alert('角色「'+name+'」创建成功');
+  }
+
+  /* ===== 编辑角色 ===== */
+  let editRoleName=null;
+  function openRoleEdit(name){
+    const r=roles.find(x=>x.name===name);
+    if(!r) return;
+    editRoleName=name;
+    el('r-name-e').value=r.name;
+    const grid=el('perm-grid-edit');
+    grid.innerHTML=PERMS.map(p=>`<label class="perm-item"><input type="checkbox" value="${p}" ${r.perms.includes(p)?'checked':''}> ${p}</label>`).join('');
+    openModal('role-modal');
+  }
+  function saveRoleEdit(){
+    const r=roles.find(x=>x.name===editRoleName);
+    if(!r) return;
+    const name=el('r-name-e').value.trim();
+    const perms=[...el('perm-grid-edit').querySelectorAll('input:checked')].map(i=>i.value);
+    if(!name){ alert('请输入角色名'); return; }
+    if(name!==editRoleName && roles.some(x=>x.name===name)){ alert('角色名已存在'); return; }
+    const renamed=(name!==editRoleName);
+    r.name=name; r.perms=perms.length?perms.join('、'):'无';
+    saveRoles(); renderRoles();
+    if(renamed){ users.forEach(u=>{ if(u.role===editRoleName) u.role=name; }); saveUsers(); renderUsers(); }
+    renderUserRoleSelects();
+    closeModal('role-modal');
+    alert('保存成功');
+  }
+
+  /* ===== 删除角色 ===== */
+  function deleteRole(name){
+    if(name==='超级管理员'){ alert('超级管理员角色不可删除'); return; }
+    if(confirm('确认删除角色 '+name+' ？')){
+      roles=roles.filter(r=>r.name!==name);
+      saveRoles(); renderRoles(); renderUserRoleSelects();
+    }
+  }
+
+  /* ===== 重置示例数据 ===== */
+  function resetData(){
+    if(confirm('将清空当前所有新增/修改，恢复为初始示例数据，确认？')){
+      users=JSON.parse(JSON.stringify(defaultUsers));
+      roles=JSON.parse(JSON.stringify(defaultRoles));
+      saveUsers(); saveRoles(); renderUsers(); renderRoles(); renderUserRoleSelects();
+    }
+  }
+
+  /* ===== Modal 控制 ===== */
+  function openModal(id){ el(id).classList.add('open'); }
+  function closeModal(id){ el(id).classList.remove('open'); }
+  document.querySelectorAll('.modal-mask').forEach(m=>{
+    m.onclick=(e)=>{ if(e.target===m) m.classList.remove('open'); };
   });
-  svg.innerHTML=s;
-}
-render();
+
+  /* ===== 页面切换 ===== */
+  function showView(id){
+    document.querySelectorAll('.view-section').forEach(s=>s.classList.remove('active'));
+    const target=document.getElementById('view-'+id);
+    if(target) target.classList.add('active');
+  }
+
+  /* ===== 顶部导航切换 ===== */
+  document.querySelectorAll('.nav a').forEach(a=>{
+    a.onclick=()=>{document.querySelectorAll('.nav a').forEach(x=>x.classList.remove('active')); a.classList.add('active');}
+  });
+
+  /* ===== 左侧菜单交互 ===== */
+  document.querySelectorAll('.menu-item').forEach(m=>{
+    m.onclick=()=>{
+      if(m.dataset.expand){
+        m.classList.toggle('open');
+        const sub=document.getElementById('sub-'+m.dataset.expand);
+        if(sub) sub.classList.toggle('open');
+        return;
+      }
+      document.querySelectorAll('.menu-item').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.submenu-item').forEach(x=>x.classList.remove('active'));
+      m.classList.add('active');
+      if(m.dataset.view) showView(m.dataset.view);
+    };
+  });
+
+  document.querySelectorAll('.submenu-item').forEach(s=>{
+    s.onclick=(e)=>{
+      e.stopPropagation();
+      document.querySelectorAll('.menu-item').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.submenu-item').forEach(x=>x.classList.remove('active'));
+      s.classList.add('active');
+      const parent=s.closest('.submenu').previousElementSibling;
+      if(parent) parent.classList.add('active');
+      if(s.dataset.view) showView(s.dataset.view);
+    };
+  });
+
+  /* ===== 事件绑定：用户表（编辑/删除/角色切换） ===== */
+  el('user-table-body').addEventListener('click', e=>{
+    const btn=e.target.closest('button'); if(!btn) return;
+    const act=btn.dataset.act, id=btn.dataset.id;
+    if(act==='edit') openUserEdit(id);
+    else if(act==='del') deleteUser(id);
+  });
+  el('user-table-body').addEventListener('change', e=>{
+    const sel=e.target.closest('select[data-act="role"]'); if(!sel) return;
+    const u=users.find(x=>x.id===sel.dataset.id);
+    if(u){ u.role=sel.value; saveUsers(); }
+  });
+  /* ===== 事件绑定：角色表（编辑/删除） ===== */
+  el('role-table-body').addEventListener('click', e=>{
+    const btn=e.target.closest('button'); if(!btn || btn.disabled) return;
+    const act=btn.dataset.act, name=btn.dataset.name;
+    if(act==='edit-r') openRoleEdit(name);
+    else if(act==='del-r') deleteRole(name);
+  });
+  el('btn-create-user').onclick=createUser;
+  el('btn-create-role').onclick=createRole;
+  el('btn-save-user').onclick=saveUserEdit;
+  el('btn-save-role').onclick=saveRoleEdit;
+  el('btn-reset-data').onclick=resetData;
+
+  /* ===== 登录逻辑 ===== */
+  function doLogin(){
+    const idEl=document.getElementById('login-id');
+    const pwdEl=document.getElementById('login-pwd');
+    const errEl=document.getElementById('login-error');
+    const id=idEl.value.trim();
+    const pwd=pwdEl.value;
+    const rule=/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+    if(!rule.test(pwd)){
+      errEl.textContent='密码必须包含英文字母、数字、特殊符号，且不低于8位';
+      errEl.style.display='block';
+      return;
+    }
+    const user=users.find(u=>u.id===id && u.pwd===pwd);
+    if(!user){
+      errEl.textContent='账号或密码错误';
+      errEl.style.display='block';
+      return;
+    }
+    errEl.style.display='none';
+    if(document.getElementById('rem-user').checked) localStorage.setItem('rem-user', id);
+    else localStorage.removeItem('rem-user');
+    if(document.getElementById('rem-login').checked){
+      const expire=Date.now()+7*24*60*60*1000;
+      localStorage.setItem('login-token', JSON.stringify({id:id,expire:expire}));
+    }else{
+      localStorage.removeItem('login-token');
+    }
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='block';
+  }
+
+  function checkAutoLogin(){
+    const tokenStr=localStorage.getItem('login-token');
+    if(tokenStr){
+      try{
+        const token=JSON.parse(tokenStr);
+        if(token && token.expire && token.expire>Date.now()){
+          document.getElementById('login-screen').style.display='none';
+          document.getElementById('app').style.display='block';
+          return;
+        }
+      }catch(e){}
+    }
+    const remUser=localStorage.getItem('rem-user');
+    if(remUser) document.getElementById('login-id').value=remUser;
+  }
+
+  document.getElementById('login-btn').onclick=doLogin;
+  document.getElementById('login-pwd').onkeydown=(e)=>{ if(e.key==='Enter') doLogin(); };
+  document.getElementById('forgot-pwd').onclick=(e)=>{
+    e.preventDefault();
+    alert('请联系管理员重置密码');
+  };
+
+  /* ===== 月末非标物料对比检查 ===== */
+  let finishData={headers:[],data:[]};
+  let stockData={headers:[],data:[]};
+  let lastResult=[];
+
+  function detectDelimiter(text){
+    const firstLine=(text.split(/\r?\n/)[0])||'';
+    const c=(firstLine.match(/,/g)||[]).length;
+    const s=(firstLine.match(/;/g)||[]).length;
+    const t=(firstLine.match(/\t/g)||[]).length;
+    if(t>=c && t>=s) return '\t';
+    if(s>=c) return ';';
+    return ',';
+  }
+
+  function parseDelimited(text, delim){
+    text=text.replace(/^\uFEFF/,'');
+    const rows=[];
+    let row=[],field='',inQuotes=false;
+    for(let i=0;i<text.length;i++){
+      const c=text[i];
+      if(inQuotes){
+        if(c==='"'){
+          if(text[i+1]==='"'){field+='"';i++;}
+          else inQuotes=false;
+        } else field+=c;
+      } else {
+        if(c==='"') inQuotes=true;
+        else if(c===delim){ row.push(field); field=''; }
+        else if(c==='\r'){}
+        else if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=''; }
+        else field+=c;
+      }
+    }
+    if(field!==''||row.length>0){ row.push(field); rows.push(row); }
+    return rows;
+  }
+
+  function importFile(file, target, previewId, fileLabelId){
+    const name=file.name.toLowerCase();
+    const reader=new FileReader();
+    if(name.endsWith('.xlsx')||name.endsWith('.xls')){
+      reader.onload=e=>{
+        try{
+          const wb=XLSX.read(e.target.result,{type:'array'});
+          const ws=wb.Sheets[wb.SheetNames[0]];
+          const rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+          applyRows(rows, target, file, previewId, fileLabelId);
+        }catch(err){ alert('Excel 解析失败：'+err.message); }
+      };
+      reader.readAsArrayBuffer(file);
+    }else{
+      reader.onload=e=>{
+        const delim=detectDelimiter(e.target.result);
+        const rows=parseDelimited(e.target.result, delim);
+        applyRows(rows, target, file, previewId, fileLabelId);
+      };
+      reader.readAsText(file,'UTF-8');
+    }
+  }
+
+  function applyRows(rows, target, file, previewId, fileLabelId){
+    if(rows.length<1){ alert('文件为空或解析失败'); return; }
+    const headers=rows[0].map(h=>String(h).trim());
+    const data=[];
+    for(let i=1;i<rows.length;i++){
+      const r=rows[i];
+      if(Array.isArray(r) && r.length===1 && String(r[0]).trim()==='') continue;
+      const obj={};
+      headers.forEach((h,idx)=>{ obj[h]=r[idx]!==undefined?r[idx]:''; });
+      data.push(obj);
+    }
+    target.headers=headers;
+    target.data=data;
+    el(fileLabelId).textContent=file.name+'（'+data.length+' 行）';
+    renderPreview(previewId, headers, data);
+    refreshColumnSelectors();
+  }
+
+  function renderPreview(tableId, headers, data){
+    const table=el(tableId);
+    const thead=table.querySelector('thead');
+    const tbody=table.querySelector('tbody');
+    thead.innerHTML='<tr>'+headers.map(h=>`<th>${h}</th>`).join('')+'</tr>';
+    const top=data.slice(0,20);
+    tbody.innerHTML=top.map(r=>'<tr>'+headers.map(h=>`<td>${r[h]}</td>`).join('')+'</tr>').join('');
+    if(data.length===0) tbody.innerHTML='<tr><td colspan="'+(headers.length||1)+'" class="empty-tip">无数据</td></tr>';
+  }
+
+  function refreshColumnSelectors(){
+    const fill=(selId,headers)=>{
+      const sel=el(selId);
+      sel.innerHTML=headers.map(h=>`<option value="${h}">${h}</option>`).join('');
+    };
+    if(finishData.headers.length){
+      fill('finish-wbs-col',finishData.headers);
+      const auto=finishData.headers.find(h=>/wbs/i.test(h));
+      if(auto) el('finish-wbs-col').value=auto;
+    }
+    if(stockData.headers.length){
+      fill('stock-wbs-col',stockData.headers);
+      const auto=stockData.headers.find(h=>/wbs/i.test(h));
+      if(auto) el('stock-wbs-col').value=auto;
+      fill('stock-qty-col',stockData.headers);
+      const autoQ=stockData.headers.find(h=>/(数量|库存|qty|qib|stock)/i.test(h));
+      if(autoQ) el('stock-qty-col').value=autoQ;
+    }
+  }
+
+  function analyze(){
+    if(!finishData.headers.length || !stockData.headers.length){
+      const tip=el('analyze-tip');
+      tip.textContent='请先导入完工明细表和库存明细表。';
+      tip.style.color='var(--bad)';
+      return;
+    }
+    const fWbs=el('finish-wbs-col').value;
+    const sWbs=el('stock-wbs-col').value;
+    const sQty=el('stock-qty-col').value;
+    if(!fWbs||!sWbs||!sQty){ alert('请先确认三列映射'); return; }
+
+    // 完工表所有 WBS 编号（去重、去空）
+    const wbsSet=new Set();
+    finishData.data.forEach(r=>{
+      const v=(r[fWbs]||'').toString().trim();
+      if(v) wbsSet.add(v);
+    });
+
+    // 库存表中匹配 WBS 且库存数量 != 0 的明细
+    const result=[];
+    stockData.data.forEach(r=>{
+      const w=(r[sWbs]||'').toString().trim();
+      const raw=(r[sQty]||'0').toString().replace(/,/g,'').trim();
+      const q=parseFloat(raw);
+      if(wbsSet.has(w) && !isNaN(q) && q!==0){
+        result.push(r);
+      }
+    });
+
+    lastResult=result;
+    const tip=el('analyze-tip');
+    tip.textContent='完成：完工表提取 '+wbsSet.size+' 个 WBS 编号，匹配到库存数量不为 0 的明细 '+result.length+' 条。';
+    tip.style.color='var(--text-2)';
+    el('result-count').textContent='（共 '+result.length+' 条）';
+    renderResult(result);
+  }
+
+  function renderResult(data){
+    const table=el('result-table');
+    const headers=stockData.headers;
+    const thead=table.querySelector('thead');
+    const tbody=table.querySelector('tbody');
+    if(headers.length){
+      thead.innerHTML='<tr>'+headers.map(h=>`<th>${h}</th>`).join('')+'</tr>';
+    }
+    if(data.length===0){
+      tbody.innerHTML='<tr><td colspan="'+(headers.length||1)+'" class="empty-tip">无匹配结果（或数量均为 0）</td></tr>';
+      return;
+    }
+    tbody.innerHTML=data.map(r=>'<tr>'+headers.map(h=>`<td>${r[h]}</td>`).join('')+'</tr>').join('');
+  }
+
+  function exportResult(){
+    if(lastResult.length===0){ alert('暂无可导出的结果，请先综合分析。'); return; }
+    const headers=stockData.headers;
+    const lines=[headers.join(',')];
+    lastResult.forEach(r=>{
+      const row=headers.map(h=>{
+        let v=(r[h]===undefined?'':r[h]).toString();
+        if(v.includes(',')||v.includes('"')||v.includes('\n')||v.includes('\r')) v='"'+v.replace(/"/g,'""')+'"';
+        return v;
+      });
+      lines.push(row.join(','));
+    });
+    const csv='\uFEFF'+lines.join('\r\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='月末非标物料对比_'+new Date().toISOString().slice(0,10)+'.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function exportXlsx(){
+    if(lastResult.length===0){ alert('暂无可导出的结果，请先综合分析。'); return; }
+    const ws=XLSX.utils.json_to_sheet(lastResult);
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, '对比结果');
+    XLSX.writeFile(wb, '月末非标物料对比_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  }
+
+  el('btn-import-finish').onclick=()=>el('file-finish').click();
+  el('btn-import-stock').onclick=()=>el('file-stock').click();
+  el('file-finish').onchange=e=>{
+    if(e.target.files[0]) importFile(e.target.files[0],finishData,'finish-preview','finish-file');
+    e.target.value='';
+  };
+  el('file-stock').onchange=e=>{
+    if(e.target.files[0]) importFile(e.target.files[0],stockData,'stock-preview','stock-file');
+    e.target.value='';
+  };
+  el('btn-analyze').onclick=analyze;
+  el('btn-export').onclick=exportResult;
+  el('btn-export-xlsx').onclick=exportXlsx;
+
+  /* ===== 初始化 ===== */
+  renderUsers();
+  renderRoles();
+  renderUserRoleSelects();
+  checkAutoLogin();
 </script>
 </body>
 </html>

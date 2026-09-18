@@ -356,7 +356,8 @@
           </div>
         </div>
         <div class="panel">
-          <h2>库存明细表（右）</h2>
+          <h2>库存明细表</h2>
+          <div style="font-size:12px;color:var(--text-2);margin:-6px 0 8px">预期列：会计年度、会计期间、组织编号、组织名称、仓库编号、仓库名称、物料编号、物料名称、规格型号、方向、主数量、主计量单位、WBS编号、项目WBS</div>
           <div class="crud-form" style="margin-bottom:10px">
             <button class="btn" id="btn-import-stock">导入本地文件</button>
             <span id="stock-file" style="font-size:13px;color:var(--text-2)">未选择文件</span>
@@ -373,21 +374,8 @@
         <div class="crud-form" style="margin-bottom:14px">
           <button class="btn" id="btn-analyze">综合分析</button>
         </div>
-        <div class="crud-form" style="margin-bottom:6px;align-items:flex-end">
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:12px;color:var(--text-2)">完工表 WBS 列</label>
-            <select id="finish-wbs-col" style="height:34px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;min-width:130px"></select>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:12px;color:var(--text-2)">库存表 WBS 列</label>
-            <select id="stock-wbs-col" style="height:34px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;min-width:130px"></select>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px">
-            <label style="font-size:12px;color:var(--text-2)">库存数量列</label>
-            <select id="stock-qty-col" style="height:34px;border:1px solid var(--border);border-radius:6px;padding:0 12px;font-size:13px;min-width:130px"></select>
-          </div>
-        </div>
-        <div id="analyze-tip" style="font-size:13px;color:var(--text-2)">请先导入两张表，确认列映射后点击综合分析。</div>
+        <div style="font-size:13px;color:var(--text-2);margin-bottom:6px">匹配规则：以完工明细表「WBS」列逐个到库存明细表「WBS编号」列筛选，命中则整行记入结果，未命中跳过；结果列固定为 仓库编号、仓库名称、物料编号、规格型号、主数量、WBS编号、项目WBS。</div>
+        <div id="analyze-tip" style="font-size:13px;color:var(--text-2)">请先导入两张表，再点击综合分析。</div>
       </div>
 
       <!-- 分析结果 -->
@@ -944,7 +932,6 @@
     target.data=data;
     el(fileLabelId).textContent=file.name+'（'+data.length+' 行）';
     renderPreview(previewId, headers, data);
-    refreshColumnSelectors();
   }
 
   function renderPreview(tableId, headers, data){

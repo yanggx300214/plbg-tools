@@ -358,7 +358,7 @@
         </div>
         <div class="panel">
           <h2>库存明细表</h2>
-          <div style="font-size:12px;color:var(--text-2);margin:-6px 0 8px">预期列：会计年度、会计期间、组织编号、组织名称、仓库编号、仓库名称、物料编号、物料名称、规格型号、方向、主数量、主计量单位、WBS编号、项目WBS</div>
+          <div style="font-size:12px;color:var(--text-2);margin:-6px 0 8px">预期列：仓库编号、仓库名称、物料编号、物料名称、规格型号、主数量、主计量单位、WBS编号、项目WBS</div>
           <div class="crud-form" style="margin-bottom:10px">
             <button class="btn" id="btn-import-stock">导入本地文件</button>
             <span id="stock-file" style="font-size:13px;color:var(--text-2)">未选择文件</span>
@@ -375,7 +375,7 @@
         <div class="crud-form" style="margin-bottom:14px">
           <button class="btn" id="btn-analyze">综合分析</button>
         </div>
-        <div style="font-size:13px;color:var(--text-2);margin-bottom:6px">匹配规则：以完工明细表「WBS」列逐个到库存明细表「WBS编号」列筛选，命中则整行记入结果，未命中跳过；结果列固定为 仓库编号、仓库名称、物料编号、规格型号、主数量、WBS编号、项目WBS。</div>
+        <div style="font-size:13px;color:var(--text-2);margin-bottom:6px">匹配规则：以完工明细表「WBS」列逐个到库存明细表「WBS编号」列筛选，命中则整行记入结果，未命中跳过；结果列固定为 仓库编号、仓库名称、物料编号、物料名称、规格型号、主数量、主计量单位、WBS编号、项目WBS。</div>
         <div id="analyze-tip" style="font-size:13px;color:var(--text-2)">请先导入两张表，再点击综合分析。</div>
       </div>
 
@@ -945,8 +945,8 @@
     if(data.length===0) tbody.innerHTML='<tr><td colspan="'+(headers.length||1)+'" class="empty-tip">无数据</td></tr>';
   }
 
-  /* 固定匹配规则：完工明细表「WBS」↔ 库存明细表「WBS编号」，结果固定 7 列 */
-  const RESULT_COLS=['仓库编号','仓库名称','物料编号','规格型号','主数量','WBS编号','项目WBS'];
+  /* 固定匹配规则：完工明细表「WBS」↔ 库存明细表「WBS编号」，结果固定 9 列 */
+  const RESULT_COLS=['仓库编号','仓库名称','物料编号','物料名称','规格型号','主数量','主计量单位','WBS编号','项目WBS'];
 
   function findCol(headers, exact, re){
     if(headers.indexOf(exact)>=0) return exact;

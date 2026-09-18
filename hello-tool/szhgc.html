@@ -346,7 +346,8 @@
       <!-- 导入区 -->
       <div class="grid2" style="grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px">
         <div class="panel">
-          <h2>完工明细表（左）</h2>
+          <h2>完工明细表</h2>
+          <div style="font-size:12px;color:var(--text-2);margin:-6px 0 8px">预期列：公司编号、组织编号、组织名称、WBS、WBS名称</div>
           <div class="crud-form" style="margin-bottom:10px">
             <button class="btn" id="btn-import-finish">导入本地文件</button>
             <span id="finish-file" style="font-size:13px;color:var(--text-2)">未选择文件</span>
@@ -944,59 +945,55 @@
     if(data.length===0) tbody.innerHTML='<tr><td colspan="'+(headers.length||1)+'" class="empty-tip">无数据</td></tr>';
   }
 
-  function refreshColumnSelectors(){
-    const fill=(selId,headers)=>{
-      const sel=el(selId);
-      sel.innerHTML=headers.map(h=>`<option value="${h}">${h}</option>`).join('');
-    };
-    if(finishData.headers.length){
-      fill('finish-wbs-col',finishData.headers);
-      const auto=finishData.headers.find(h=>/wbs/i.test(h));
-      if(auto) el('finish-wbs-col').value=auto;
-    }
-    if(stockData.headers.length){
-      fill('stock-wbs-col',stockData.headers);
-      const auto=stockData.headers.find(h=>/wbs/i.test(h));
-      if(auto) el('stock-wbs-col').value=auto;
-      fill('stock-qty-col',stockData.headers);
-      const autoQ=stockData.headers.find(h=>/(数量|库存|qty|qib|stock)/i.test(h));
-      if(autoQ) el('stock-qty-col').value=autoQ;
-    }
+  /* 固定匹配规则：完工明细表「WBS」↔ 库存明细表「WBS编号」，结果固定 7 列 */
+  const RESULT_COLS=['仓库编号','仓库名称','物料编号','规格型号','主数量','WBS编号','项目WBS'];
+
+  function findCol(headers, exact, re){
+    if(headers.indexOf(exact)>=0) return exact;
+    const hit=headers.find(h=>re.test(h));
+    return hit||'';
   }
 
   function analyze(){
+    const tip=el('analyze-tip');
     if(!finishData.headers.length || !stockData.headers.length){
-      const tip=el('analyze-tip');
       tip.textContent='请先导入完工明细表和库存明细表。';
       tip.style.color='var(--bad)';
       return;
     }
-    const fWbs=el('finish-wbs-col').value;
-    const sWbs=el('stock-wbs-col').value;
-    const sQty=el('stock-qty-col').value;
-    if(!fWbs||!sWbs||!sQty){ alert('请先确认三列映射'); return; }
+    const fWbs=findCol(finishData.headers,'WBS',/wbs(?!名称)/i);
+    const sWbs=findCol(stockData.headers,'WBS编号',/wbs/i);
+    const problems=[];
+    if(!fWbs) problems.push('完工明细表缺少「WBS」列');
+    if(!sWbs) problems.push('库存明细表缺少「WBS编号」列');
+    const missCols=RESULT_COLS.filter(c=>stockData.headers.indexOf(c)<0);
+    if(missCols.length) problems.push('库存明细表缺少列：'+missCols.join('、'));
+    if(problems.length){
+      tip.textContent=problems.join('；');
+      tip.style.color='var(--bad)';
+      return;
+    }
 
-    // 完工表所有 WBS 编号（去重、去空）
+    // 完工明细表所有 WBS 编号（去重、去空）
     const wbsSet=new Set();
     finishData.data.forEach(r=>{
-      const v=(r[fWbs]||'').toString().trim();
+      const v=(r[fWbs]===undefined?'':r[fWbs]).toString().trim();
       if(v) wbsSet.add(v);
     });
 
-    // 库存表中匹配 WBS 且库存数量 != 0 的明细
+    // 逐个 WBS 到库存明细表筛选：命中则按固定 7 列赋值记录，未命中跳过
     const result=[];
     stockData.data.forEach(r=>{
-      const w=(r[sWbs]||'').toString().trim();
-      const raw=(r[sQty]||'0').toString().replace(/,/g,'').trim();
-      const q=parseFloat(raw);
-      if(wbsSet.has(w) && !isNaN(q) && q!==0){
-        result.push(r);
+      const w=(r[sWbs]===undefined?'':r[sWbs]).toString().trim();
+      if(w && wbsSet.has(w)){
+        const row={};
+        RESULT_COLS.forEach(c=>{ row[c]=r[c]!==undefined?r[c]:''; });
+        result.push(row);
       }
     });
 
     lastResult=result;
-    const tip=el('analyze-tip');
-    tip.textContent='完成：完工表提取 '+wbsSet.size+' 个 WBS 编号，匹配到库存数量不为 0 的明细 '+result.length+' 条。';
+    tip.textContent='完成：完工明细表提取 '+wbsSet.size+' 个 WBS 编号，在库存明细表中匹配到 '+result.length+' 条明细。';
     tip.style.color='var(--text-2)';
     el('result-count').textContent='（共 '+result.length+' 条）';
     renderResult(result);
@@ -1004,14 +1001,12 @@
 
   function renderResult(data){
     const table=el('result-table');
-    const headers=stockData.headers;
+    const headers=RESULT_COLS;
     const thead=table.querySelector('thead');
     const tbody=table.querySelector('tbody');
-    if(headers.length){
-      thead.innerHTML='<tr>'+headers.map(h=>`<th>${h}</th>`).join('')+'</tr>';
-    }
+    thead.innerHTML='<tr>'+headers.map(h=>`<th>${h}</th>`).join('')+'</tr>';
     if(data.length===0){
-      tbody.innerHTML='<tr><td colspan="'+(headers.length||1)+'" class="empty-tip">无匹配结果（或数量均为 0）</td></tr>';
+      tbody.innerHTML='<tr><td colspan="'+headers.length+'" class="empty-tip">无匹配结果（库存明细表中未找到对应 WBS）</td></tr>';
       return;
     }
     tbody.innerHTML=data.map(r=>'<tr>'+headers.map(h=>`<td>${r[h]}</td>`).join('')+'</tr>').join('');
@@ -1019,7 +1014,7 @@
 
   function exportResult(){
     if(lastResult.length===0){ alert('暂无可导出的结果，请先综合分析。'); return; }
-    const headers=stockData.headers;
+    const headers=RESULT_COLS;
     const lines=[headers.join(',')];
     lastResult.forEach(r=>{
       const row=headers.map(h=>{
@@ -1043,7 +1038,7 @@
 
   function exportXlsx(){
     if(lastResult.length===0){ alert('暂无可导出的结果，请先综合分析。'); return; }
-    const ws=XLSX.utils.json_to_sheet(lastResult);
+    const ws=XLSX.utils.json_to_sheet(lastResult,{header:RESULT_COLS});
     const wb=XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, '对比结果');
     XLSX.writeFile(wb, '月末非标物料对比_'+new Date().toISOString().slice(0,10)+'.xlsx');

@@ -227,7 +227,8 @@
     <div class="icon-btn" title="消息">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
     </div>
-    <div class="avatar">杨</div>
+    <div class="avatar" title="当前登录用户">杨</div>
+    <button id="logout-btn" title="退出登录" style="margin-left:10px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:13px">退出登录</button>
   </div>
 </header>
 
@@ -560,7 +561,7 @@
   function saveRoles(){ try{localStorage.setItem(LS_ROLES,JSON.stringify(roles));}catch(e){} }
 
   const el=id=>document.getElementById(id);
-  function validPwd(p){ return /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/.test(p); }
+  function validPwd(p){ return /^(?=.*[a-zA-Z])(?=.*\d).{6,}$/.test(p); }
   function roleNames(){ return roles.map(r=>r.name); }
 
   /* ===== 渲染用户表 ===== */
@@ -623,7 +624,7 @@
     if(users.some(u=>u.id===id)){ alert('账号已存在'); return; }
     if(!name){ alert('请输入姓名'); return; }
     if(!pwd){ alert('请输入密码'); return; }
-    if(!validPwd(pwd)){ alert('密码必须包含英文字母、数字、特殊符号，且不低于8位'); return; }
+    if(!validPwd(pwd)){ alert('密码至少6位，且需同时包含字母和数字'); return; }
     users.push({id,name,role,pwd});
     saveUsers(); renderUsers(); renderUserRoleSelects();
     el('u-id').value=''; el('u-name').value=''; el('u-pwd').value='';
@@ -650,7 +651,7 @@
     const pwd=el('u-pwd-e').value;
     const role=el('u-role-e').value;
     if(!name){ alert('请输入姓名'); return; }
-    if(pwd && !validPwd(pwd)){ alert('密码必须包含英文字母、数字、特殊符号，且不低于8位'); return; }
+    if(pwd && !validPwd(pwd)){ alert('密码至少6位，且需同时包含字母和数字'); return; }
     u.name=name; u.role=role; if(pwd) u.pwd=pwd;
     saveUsers(); renderUsers(); renderUserRoleSelects();
     closeModal('user-modal');
@@ -802,9 +803,8 @@
     const errEl=document.getElementById('login-error');
     const id=idEl.value.trim();
     const pwd=pwdEl.value;
-    const rule=/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
-    if(!rule.test(pwd)){
-      errEl.textContent='密码必须包含英文字母、数字、特殊符号，且不低于8位';
+    if(!validPwd(pwd)){
+      errEl.textContent='密码至少6位，且需同时包含字母和数字';
       errEl.style.display='block';
       return;
     }
@@ -842,6 +842,24 @@
     const remUser=localStorage.getItem('rem-user');
     if(remUser) document.getElementById('login-id').value=remUser;
   }
+
+  /* ===== 退出登录：仅清除登录态，保留用户/角色数据 ===== */
+  function doLogout(){
+    const remUser=localStorage.getItem('rem-user');
+    localStorage.removeItem('login-token');
+    localStorage.removeItem('rem-user');
+    const ls=document.getElementById('login-screen');
+    if(ls) ls.style.display='flex';
+    const app=document.getElementById('app');
+    if(app) app.style.display='none';
+    const idEl=document.getElementById('login-id');
+    if(idEl) idEl.value = remUser || '';
+    const pwdEl=document.getElementById('login-pwd');
+    if(pwdEl) pwdEl.value = '';
+    const errEl=document.getElementById('login-error');
+    if(errEl) errEl.style.display='none';
+  }
+  document.getElementById('logout-btn').onclick=doLogout;
 
   document.getElementById('login-btn').onclick=doLogin;
   document.getElementById('login-pwd').onkeydown=(e)=>{ if(e.key==='Enter') doLogin(); };
